@@ -1,6 +1,6 @@
 using backend.Data;
 using Microsoft.EntityFrameworkCore;
-using DotNetEnc+v;
+using DotNetEnv;
 
 // DotNetEnv for secrets in .env file niggas
 Env.Load();
