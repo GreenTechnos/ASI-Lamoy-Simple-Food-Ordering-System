@@ -23,5 +23,21 @@ namespace backend.Controllers
             var users = _context.Users.ToList();
             return Ok(users);
         }
+
+        [HttpGet("{id}")]
+        public IActionResult getById([FromRoute] int id)
+        {
+            var user = _context.Users.Find(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+
+        
+
+        
     }
 }
