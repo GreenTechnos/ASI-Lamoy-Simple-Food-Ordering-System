@@ -9,11 +9,11 @@ namespace backend.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    public class RegisterMineController : ControllerBase
+    public class RegisterController : ControllerBase
     {
         private readonly Data.ApplicationDBContext _context;
 
-        public RegisterMineController(Data.ApplicationDBContext context)
+        public RegisterController(Data.ApplicationDBContext context)
         {
             _context = context;
         }
