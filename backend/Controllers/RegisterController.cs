@@ -47,7 +47,7 @@ namespace backend.Controllers
                 PhoneNumber = request.PhoneNumber,
                 Address = request.Address,
                 Role = Models.UserRole.Customer, 
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow // <-- Use UTC time
             };
 
             _context.Users.Add(newUser);

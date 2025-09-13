@@ -13,16 +13,37 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    console.log('Sign up clicked with:', { 
-      username, 
-      email, 
-      fullname,
-      address,
-      phoneNumber,
-      password 
-    });
+
+    try {
+      const response = await fetch('http://localhost:5143/api/user', { // Change port if needed
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userName: username,
+          email: email,
+          password: password,
+          fullName: fullname,
+          phoneNumber: phoneNumber,
+          address: address,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(data.message); // Show success message
+        navigate('/login');  // Redirect to login page
+      } else {
+        const error = await response.text();
+        alert(error); // Show error message
+      }
+    } catch (error) {
+      console.error('Error during sign up:', error);
+      alert('An error occurred. Please try again later.');
+    }
   };
 
   const handleSignIn = () => {
