@@ -19,6 +19,18 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy
+            .WithOrigins("http://localhost:5173") // React dev server origin
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,11 +39,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-
 //Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
+// Use CORS before other middleware that handles requests
+app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
 app.MapControllers();
