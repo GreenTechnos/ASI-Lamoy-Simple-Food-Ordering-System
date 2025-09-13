@@ -19,23 +19,23 @@ namespace backend.LoginControllers
 
         public class LoginRequest
         {
-            public string UserName { get; set; }
+            public string Email { get; set; }
             public string Password { get; set; }
         }
 
         [HttpPost]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            if (string.IsNullOrEmpty(request.UserName) || string.IsNullOrEmpty(request.Password))
-                return BadRequest("Username and password are required.");
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                return BadRequest("Email and password are required.");
 
-            var user = _context.Users.FirstOrDefault(u => u.UserName == request.UserName);
+            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email);
             if (user != null && user.PasswordHash == request.Password)
             {
                 // Return only safe user info
                 return Ok(new { user.UserId, user.UserName, user.Email, user.Role });
             }
-            return Unauthorized("Invalid username or password.");
+            return Unauthorized("Invalid Email or password.");
         }
     }
 }
