@@ -10,9 +10,34 @@ const WelcomeLogin = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log('Sign in clicked with:', { email, password });
+
+    try {
+      const response = await fetch('http://localhost:5143/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Email: email, // Use email as username
+          Password: password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert('Login successful!');
+        // Optionally save user info to localStorage or context here
+        navigate('/'); // Redirect to home or dashboard
+      } else {
+        const error = await response.text();
+        alert(error);
+      }
+    } catch (err) {
+      alert('Login failed. Please try again.');
+      console.error(err);
+    }
   };
 
   const handleForgotPassword = () => {
