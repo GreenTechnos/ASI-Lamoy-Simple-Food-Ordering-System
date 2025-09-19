@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Controllers
 {
         [ApiController]
-        [Route("api/[controller]")]
+        [Route("api/menu")]
         public class MenuController : ControllerBase
         {
             private readonly ApplicationDBContext _context;
