@@ -34,7 +34,7 @@ const SignUp = () => {
 
       if (response.ok) {
         const data = await response.json();
-        alert(data.message); // Show success message
+        alert(data.message || 'Account created successfully!'); // Use the data properly
         navigate('/login');  // Redirect to login page
       } else {
         const error = await response.text();
@@ -67,26 +67,28 @@ const SignUp = () => {
       <div className="absolute w-full z-50">
         <Navigation />
       </div>
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
-        <div className="text-center mb-8 mt-20">
-          <h1 className="text-white text-4xl font-bold mb-4">Get Started</h1>
-          <p className="text-white/90 text-lg">
-            Sign up now and enjoy quick, simple, and hassle-free<br />
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="text-center mb-6 sm:mb-8 mt-16 sm:mt-20">
+          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-4">Get Started</h1>
+          <p className="text-white/90 text-base sm:text-lg px-4 max-w-md sm:max-w-none mx-auto">
+            Sign up now and enjoy quick, simple, and hassle-free
+            <span className="hidden sm:inline"><br /></span>
+            <span className="sm:hidden"> </span>
             food ordering—Filipino style.
           </p>
         </div>
         
-        <div className="w-full max-w-2xl bg-white/20 backdrop-blur-sm rounded-3xl p-4">
-          <div className="w-full bg-white rounded-3xl p-10 border border-gray-100">
-            <h2 className="text-3xl font-bold text-gray-700 mb-8 text-center">
+        <div className="w-full max-w-xs sm:max-w-lg md:max-w-2xl bg-white/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-3 sm:p-4">
+          <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 border border-gray-100">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-700 mb-6 sm:mb-8 text-center">
               Sign Up to <span className="text-yellow-500">Lamoy</span>
             </h2>
           
-            <form onSubmit={handleSignUp} className="space-y-4">
-              {/* Username and Full Name in two columns */}
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSignUp} className="space-y-4 sm:space-y-5">
+              {/* Username and Full Name - responsive columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-600 mb-1">
+                  <label htmlFor="username" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
                     Username
                   </label>
                   <input
@@ -94,12 +96,12 @@ const SignUp = () => {
                     id="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 text-sm sm:text-base"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="fullname" className="block text-sm font-medium text-gray-600 mb-1">
+                  <label htmlFor="fullname" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
                     Full Name
                   </label>
                   <input
@@ -107,14 +109,14 @@ const SignUp = () => {
                     id="fullname"
                     value={fullname}
                     onChange={(e) => setFullname(e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 text-sm sm:text-base"
                     required
                   />
                 </div>
               </div>
               
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
+                <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
                   Email
                 </label>
                 <input
@@ -122,15 +124,15 @@ const SignUp = () => {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 text-sm sm:text-base"
                   required
                 />
               </div>
 
-              {/* Phone Number and Password in two columns */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Phone Number and Password - responsive columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-600 mb-1">
+                  <label htmlFor="phoneNumber" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
                     Phone Number
                   </label>
                   <input
@@ -138,12 +140,12 @@ const SignUp = () => {
                     id="phoneNumber"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 text-sm sm:text-base"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1">
+                  <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
                     Password
                   </label>
                   <input
@@ -151,14 +153,14 @@ const SignUp = () => {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 text-sm sm:text-base"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-600 mb-1">
+                <label htmlFor="address" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
                   Address
                 </label>
                 <textarea
@@ -166,19 +168,19 @@ const SignUp = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   rows="2"
-                  className="w-full px-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 resize-none"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 resize-none text-sm sm:text-base"
                   required
                 />
               </div>
               
               <button
                 type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-4 px-4 rounded-xl font-bold text-lg transition-all duration-200 mt-6"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 sm:py-4 px-4 rounded-lg sm:rounded-xl font-bold text-base sm:text-lg transition-all duration-200 mt-4 sm:mt-6"
               >
                 Sign Up
               </button>
               
-              <div className="text-center text-sm text-gray-600 pt-2">
+              <div className="text-center text-xs sm:text-sm text-gray-600 pt-2">
                 Already have an Account?{' '}
                 <button 
                   type="button"
