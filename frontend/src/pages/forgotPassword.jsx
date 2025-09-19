@@ -3,50 +3,51 @@ import Navigation from '../components/navbar';
 import bgImage from '../assets/MAIN4.png';
 import { useNavigate } from 'react-router-dom';
 
-
-
-const WelcomeLogin = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); // 'success' or 'error'
   const navigate = useNavigate();
 
-  const handleSignIn = async (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
 
     try {
-      const response = await fetch('http://localhost:5143/api/login', {
+      const response = await fetch('http://localhost:5143/api/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          Email: email, // Use email as username
-          Password: password,
+          Email: email,
         }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        alert(data.message || 'Login successful!'); // Use the data properly
-        // Optionally save user info to localStorage or context here
-        // localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/'); // Redirect to home or dashboard
+        // Remove the unused data variable
+        await response.json(); // Just consume the response
+        setMessage('Password reset instructions have been sent to your email.');
+        setMessageType('success');
+        setEmail(''); // Clear the form
       } else {
         const error = await response.text();
-        alert(error);
+        setMessage(error || 'Failed to send reset instructions. Please try again.');
+        setMessageType('error');
       }
     } catch (err) {
-      alert('Login failed. Please try again.');
+      setMessage('Something went wrong. Please try again later.');
+      setMessageType('error');
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleForgotPassword = () => {
-    navigate('/forgot-password');
-  };
-
-  const handleCreateAccount = () => {
-    navigate('/signup');
+  const handleBackToLogin = () => {
+    navigate('/login');
   };
 
   return (
@@ -66,77 +67,68 @@ const WelcomeLogin = () => {
       <div className="absolute w-full z-50">
         <Navigation />
       </div>
+      
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="text-center mb-8 sm:mb-12 mt-16 sm:mt-20">
-          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-4">Welcome!</h1>
-          <p className="text-white/90 text-base sm:text-lg px-4 max-w-md sm:max-w-none mx-auto">
-            Access your account and enjoy your favorite
+          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-4">Forgot Password?</h1>
+          <p className="text-white/90 text-base sm:text-lg px-4 max-w-md sm:max-w-lg mx-auto">
+            Don't worry! Enter your email address and we'll send you
             <span className="hidden sm:inline"><br /></span>
             <span className="sm:hidden"> </span>
-            Filipino meals anytime.
+            instructions to reset your password.
           </p>
         </div>
         
         <div className="w-full max-w-xs sm:max-w-md md:max-w-lg bg-white/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-3 sm:p-4">
           <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 border border-gray-100">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-700 mb-8 sm:mb-10 text-center">
-              Sign In to <span className="text-yellow-500">Lamoy</span>
+              Reset Your Password
             </h2>
+
+            {/* Message display */}
+            {message && (
+              <div className={`mb-6 p-4 rounded-lg text-sm sm:text-base ${
+                messageType === 'success' 
+                  ? 'bg-green-50 text-green-700 border border-green-200' 
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}>
+                {message}
+              </div>
+            )}
           
-            <form onSubmit={handleSignIn} className="space-y-5 sm:space-y-6">
+            <form onSubmit={handleResetPassword} className="space-y-5 sm:space-y-6">
               <div>
                 <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1.5 sm:mb-2">
-                  Email
+                  Email Address
                 </label>
                 <input
                   type="email"
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
                   className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 text-sm sm:text-base"
                   required
+                  disabled={isLoading}
                 />
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-600 mb-1.5 sm:mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-yellow-100 focus:border-yellow-400 outline-none transition-all duration-200 bg-gray-50 text-gray-700 text-sm sm:text-base"
-                  required
-                />
-              </div>
-              
-              <div className="text-right">
-                <button 
-                  type="button"
-                  onClick={handleForgotPassword}
-                  className="text-xs sm:text-sm text-yellow-500 hover:text-yellow-600 transition-colors font-medium"
-                >
-                  Forgot Password?
-                </button>
               </div>
               
               <button
                 type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 sm:py-4 px-4 rounded-lg sm:rounded-xl font-bold text-base sm:text-lg transition-all duration-200"
+                disabled={isLoading}
+                className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 disabled:cursor-not-allowed text-white py-3 sm:py-4 px-4 rounded-lg sm:rounded-xl font-bold text-base sm:text-lg transition-all duration-200"
               >
-                Sign In
+                {isLoading ? 'Sending...' : 'Send Reset Instructions'}
               </button>
               
               <div className="text-center text-xs sm:text-sm text-gray-600 pt-2">
-                Don't have an Account?{' '}
+                Remember your password?{' '}
                 <button 
                   type="button"
-                  onClick={handleCreateAccount}
+                  onClick={handleBackToLogin}
                   className="text-yellow-500 hover:text-yellow-600 font-semibold hover:underline transition-all"
                 >
-                  Sign Up
+                  Back to Sign In
                 </button>
               </div>
             </form>
@@ -147,4 +139,4 @@ const WelcomeLogin = () => {
   );
 };
 
-export default WelcomeLogin;
+export default ForgotPassword;
