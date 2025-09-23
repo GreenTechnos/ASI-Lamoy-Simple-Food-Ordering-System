@@ -172,20 +172,45 @@ const DynamicNavigation = () => {
               <>
                 {/* Sign In Button - only show on landing if not authenticated */}
                 {location.pathname === '/' && (
-                  <button 
-                    onClick={handleSignInClick}
-                    className="bg-white/25 hover:bg-white/35 text-white px-6 py-3 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-md backdrop-blur-md"
-                  >
-                    Sign In
-                  </button>
+                  <>
+                    <button
+                      onClick={handleSignInClick}
+                      className="bg-white/25 hover:bg-white/35 text-white px-6 py-3 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-md backdrop-blur-md cursor-pointer"
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      onClick={handleSignUpClick}
+                      className="bg-white text-yellow-500 hover:bg-gray-50 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-md cursor-pointer"
+                    >
+                      Sign Up
+                    </button>
+                  </>
                 )}
-                {/* Sign Up Button */}
-                <button 
-                  onClick={handleSignUpClick}
-                  className="bg-white text-yellow-500 hover:bg-gray-50 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-md"
-                >
-                  Sign Up
-                </button>
+
+                {/* Show Sign Up - in Login page */}
+                {location.pathname === '/login' && (
+                  <>
+                    <button
+                      onClick={handleSignUpClick}
+                      className="bg-white text-yellow-500 hover:bg-gray-50 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-md cursor-pointer"
+                    >
+                      Sign Up
+                    </button>
+                  </>
+                )}
+
+                {/* Show Sign In - in Signup page */}
+                {location.pathname === '/signup' && (
+                  <>
+                    <button
+                      onClick={handleSignInClick}
+                      className="bg-white text-yellow-500 hover:bg-gray-50 px-6 py-3 rounded-full text-sm font-semibold transition-all duration-200 hover:shadow-md cursor-pointer"
+                    >
+                      Sign In
+                    </button>
+                  </>
+                )}
               </>
             )}
           </div>
