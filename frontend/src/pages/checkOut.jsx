@@ -126,11 +126,10 @@ const CheckOutPage = () => {
         }}
       >
         <div
-          className={`transition-all duration-1000 ease-out ${
-            isVisible.hero
+          className={`transition-all duration-1000 ease-out ${isVisible.hero
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-8"
-          }`}
+            }`}
           data-section="hero"
         >
           <h1 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
@@ -159,11 +158,10 @@ const CheckOutPage = () => {
         <div className="max-w-6xl mx-auto px-4">
           {/* Breadcrumb */}
           <div
-            className={`flex items-center justify-between mb-8 transition-all duration-800 ease-out ${
-              isVisible.content
+            className={`flex items-center justify-between mb-8 transition-all duration-800 ease-out ${isVisible.content
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8"
-            }`}
+              }`}
             data-section="content"
           >
             <div className="flex items-center space-x-2 text-sm text-gray-800">
@@ -195,11 +193,10 @@ const CheckOutPage = () => {
             {/* Shopping Cart */}
             <div className="lg:col-span-2">
               <div
-                className={`bg-white rounded-xl p-6 border border-gray-200 transition-all duration-1000 ease-out ${
-                  isVisible.cartItems
+                className={`bg-white rounded-xl p-6 border border-gray-200 transition-all duration-1000 ease-out ${isVisible.cartItems
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-12"
-                }`}
+                  }`}
                 data-section="cartItems"
               >
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -213,11 +210,10 @@ const CheckOutPage = () => {
                   {cartItems.map((item, index) => (
                     <div
                       key={item.id}
-                      className={`flex items-center p-4 border border-gray-100 rounded-xl hover:shadow-sm transition-all duration-500 ease-out ${
-                        isVisible.cartItems
+                      className={`flex items-center p-4 border border-gray-100 rounded-xl hover:shadow-sm transition-all duration-500 ease-out ${isVisible.cartItems
                           ? "opacity-100 translate-y-0"
                           : "opacity-0 translate-y-8"
-                      }`}
+                        }`}
                       style={{
                         transitionDelay: isVisible.cartItems
                           ? `${200 + index * 100}ms`
@@ -264,11 +260,10 @@ const CheckOutPage = () => {
             <div className="space-y-6">
               {/* User Information */}
               <div
-                className={`bg-white rounded-xl p-6 border border-gray-200 transition-all duration-1000 ease-out ${
-                  isVisible.userInfo
+                className={`bg-white rounded-xl p-6 border border-gray-200 transition-all duration-1000 ease-out ${isVisible.userInfo
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-12"
-                }`}
+                  }`}
                 data-section="userInfo"
               >
                 <h3 className="font-bold text-xl text-gray-900 mb-6">
@@ -307,11 +302,10 @@ const CheckOutPage = () => {
 
               {/* Payment Summary */}
               <div
-                className={`bg-white rounded-xl shadow-sm p-6 transition-all duration-1000 ease-out ${
-                  isVisible.summary
+                className={`bg-white rounded-xl shadow-sm p-6 transition-all duration-1000 ease-out ${isVisible.summary
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-12"
-                }`}
+                  }`}
                 data-section="summary"
               >
                 <h3 className="font-bold text-xl text-gray-900 mb-6">
