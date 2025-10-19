@@ -3,6 +3,7 @@ import DynamicNavigation from "../components/dynamicNavbar";
 import bgImage from "../assets/MAIN4.png";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 const WelcomeLogin = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ const WelcomeLogin = () => {
   });
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showSuccess, showError } = useToast();
 
   // Intersection Observer for scroll animations
   useEffect(() => {
@@ -51,15 +53,15 @@ const WelcomeLogin = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Client-side validation
+    // Client-side validation - Replace all alert() calls
     if (!email.trim()) {
-      alert("Email Required: Please enter your email address to sign in.");
+      showError("Email Required: Please enter your email address to sign in.");
       setIsLoading(false);
       return;
     }
 
     if (!password.trim()) {
-      alert("Password Required: Please enter your password to sign in.");
+      showError("Password Required: Please enter your password to sign in.");
       setIsLoading(false);
       return;
     }
@@ -67,9 +69,7 @@ const WelcomeLogin = () => {
     // Basic email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert(
-        "Invalid Email Format: Please enter a valid email address (example: user@example.com)."
-      );
+      showError("Invalid Email Format: Please enter a valid email address (example: user@example.com).");
       setIsLoading(false);
       return;
     }
@@ -89,36 +89,38 @@ const WelcomeLogin = () => {
       if (response.ok) {
         const data = await response.json();
 
-        // Show success alert
-        alert("Welcome Back! Successfully signed in! Welcome back to Lamoy.");
+        // Save role and token
+        login(data.token);
+        localStorage.setItem("role", data.role); // store user role locally
+        localStorage.setItem("username", data.userName);
 
-        // Auto-navigate after success message
+        showSuccess(`Welcome back, ${data.userName}!`);
+
+        // Role-based navigation
         setTimeout(() => {
-          login(data.token);
-          navigate("/home");
+          if (data.role === 1) {
+            navigate("/admin");
+          } else {
+            navigate("/home");
+          }
         }, 1000);
-      } else {
+      }
+      else {
         const status = response.status;
-        let message =
-          "We encountered an issue while signing you in. Please try again.";
+        let message = "We encountered an issue while signing you in. Please try again.";
 
         if (status === 401 || status === 400) {
-          message =
-            "Invalid Credentials: The email or password you entered is incorrect. Please double-check your credentials and try again.";
+          message = "Invalid Credentials: The email or password you entered is incorrect.";
         } else if (status === 404) {
-          message =
-            "Account Not Found: No account found with this email address. Please check your email or create a new account.";
+          message = "Account Not Found: No account found with this email address.";
         } else if (status >= 500) {
-          message =
-            "Server Error: Our servers are experiencing issues. Please try again in a few minutes.";
+          message = "Server Error: Our servers are experiencing issues. Please try again in a few minutes.";
         }
 
-        alert(message);
+        showError(message);
       }
     } catch (err) {
-      alert(
-        "Connection Error: We're having trouble connecting to our servers. Please check your internet connection and try again."
-      );
+      showError("Connection Error: We're having trouble connecting to our servers. Please check your internet connection and try again.");
       console.error("Login error:", err);
     } finally {
       setIsLoading(false);
@@ -154,8 +156,8 @@ const WelcomeLogin = () => {
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div
           className={`text-center mb-8 sm:mb-12 mt-8 sm:mt-12 transition-all duration-1000 ${isVisible.hero
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-10"
             }`}
           data-section="hero"
         >
@@ -174,8 +176,8 @@ const WelcomeLogin = () => {
 
         <div
           className={`w-full max-w-xs sm:max-w-md md:max-w-lg bg-white/20 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-3 sm:p-4 transition-all duration-1000 ${isVisible.form
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-10"
             }`}
           data-section="form"
           style={{ transitionDelay: "300ms" }}
