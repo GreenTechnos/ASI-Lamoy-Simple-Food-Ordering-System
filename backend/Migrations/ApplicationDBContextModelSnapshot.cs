@@ -36,6 +36,9 @@ namespace backend.Migrations
 
                     b.HasKey("CategoryId");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("MenuCategories");
                 });
 
@@ -61,9 +64,6 @@ namespace backend.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("MenuCategoryCategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -74,7 +74,7 @@ namespace backend.Migrations
 
                     b.HasKey("ItemId");
 
-                    b.HasIndex("MenuCategoryCategoryId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("MenuItems");
                 });
@@ -122,9 +122,6 @@ namespace backend.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MenuItemItemId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
@@ -137,7 +134,7 @@ namespace backend.Migrations
 
                     b.HasKey("OrderItemId");
 
-                    b.HasIndex("MenuItemItemId");
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("OrderId");
 
@@ -181,14 +178,21 @@ namespace backend.Migrations
                     b.Property<DateTime?>("ResetTokenExpiry")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -197,7 +201,9 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Models.MenuCategory", "MenuCategory")
                         .WithMany("MenuItems")
-                        .HasForeignKey("MenuCategoryCategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("MenuCategory");
                 });
@@ -207,7 +213,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -217,7 +223,9 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Models.MenuItem", "MenuItem")
                         .WithMany("OrderItems")
-                        .HasForeignKey("MenuItemItemId");
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("backend.Models.Order", "Order")
                         .WithMany("OrderItems")
