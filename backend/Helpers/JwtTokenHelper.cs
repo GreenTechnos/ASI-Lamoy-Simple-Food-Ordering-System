@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using backend.Constants;
 
 namespace backend.Helpers
 {
@@ -16,24 +17,35 @@ namespace backend.Helpers
 
         public string GenerateToken(string userId, string email, string role, string name)
         {
+            // Create JWT claims using AppConstants
             var claims = new[]
             {
-                new Claim("userId", userId),
-                new Claim("email", email),
-                new Claim("role", role),
-                new Claim("name", name)
+                new Claim(AppConstants.Claims.UserId, userId),
+                new Claim(AppConstants.Claims.Email, email),
+                new Claim(AppConstants.Claims.Role, role),
+                new Claim(AppConstants.Claims.Name, name)
             };
 
-    #pragma warning disable CS8604 // Possible null reference argument.
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-    #pragma warning restore CS8604 // Possible null reference argument.
+            // Read JWT settings from AppConstants (no more magic strings)
+            string? keyString = _config[AppConstants.Jwt.Key];
+            string? issuer = _config[AppConstants.Jwt.Issuer];
+            string? audience = _config[AppConstants.Jwt.Audience];
+            string? expiryString = _config[AppConstants.Jwt.ExpireMinutes];
+
+            if (keyString == null)
+                throw new InvalidOperationException("JWT Key is missing in configuration.");
+
+            if (!double.TryParse(expiryString, out double expiryMinutes))
+                expiryMinutes = 60; // default fallback
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
+                issuer: issuer,
+                audience: audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"])),
+                expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
                 signingCredentials: creds
             );
 
@@ -41,4 +53,3 @@ namespace backend.Helpers
         }
     }
 }
-
