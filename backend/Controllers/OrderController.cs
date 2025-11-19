@@ -1,3 +1,4 @@
+using backend.Constants;
 using backend.DTOs.Order;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -63,7 +64,7 @@ namespace backend.Controllers
         {
             // Service handles security (user vs admin)
             await _orderService.CancelOrderAsync(id);
-            return Ok(new { message = "Order cancelled successfully" });
+            return Ok(new { message = AppConstants.Logs.OrderController.message });
         }
 
         // --- 5. ADD NEW ADMIN-ONLY ENDPOINTS ---
@@ -72,7 +73,7 @@ namespace backend.Controllers
         /// [ADMIN ONLY] Gets all orders from all users.
         /// </summary>
         [HttpGet("admin/all")]
-        [Authorize(Roles = "Admin")] // Double-check protection
+        [Authorize(Roles = AppConstants.Roles.Admin)] // Double-check protection
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetAllOrders()
         {
             _logger.LogInformation("Admin request to get all orders.");
@@ -84,7 +85,7 @@ namespace backend.Controllers
         /// [ADMIN ONLY] Updates the status of a specific order.
         /// </summary>
         [HttpPut("{id}/status")]
-        [Authorize(Roles = "Admin")] // Double-check protection
+        [Authorize(Roles = AppConstants.Roles.Admin)]// Double-check protection
         public async Task<ActionResult<OrderDto>> UpdateOrderStatus(int id, [FromBody] UpdateOrderStatusRequest request)
         {
             if (!ModelState.IsValid)
@@ -92,7 +93,7 @@ namespace backend.Controllers
                 return BadRequest(ModelState);
             }
             
-            _logger.LogInformation("Admin request to update status for order {OrderId} to {Status}", id, request.Status);
+            _logger.LogInformation(AppConstants.Logs.OrderController.log, id, request.Status);
             var updatedOrder = await _orderService.UpdateOrderStatusAsync(id, request);
             return Ok(updatedOrder);
         }

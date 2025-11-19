@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using backend.Constants;
 
 namespace backend.Middleware
 {
@@ -7,23 +8,26 @@ namespace backend.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
+        private readonly IHostEnvironment _env; // Optional: show stacktrace only in Development
 
-        public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+        public ErrorHandlingMiddleware(
+            RequestDelegate next, 
+            ILogger<ErrorHandlingMiddleware> logger,
+            IHostEnvironment env)
         {
             _next = next;
             _logger = logger;
+            _env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                // Try to run the next piece of middleware (or the controller)
                 await _next(context);
             }
             catch (Exception ex)
             {
-                // If an exception happens, handle it
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -31,40 +35,50 @@ namespace backend.Middleware
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             // Log the error
-            _logger.LogError(exception, "An unhandled exception occurred.");
+            _logger.LogError(exception, AppConstants.Logs.UnhandledException);
 
-            // Default to a 500 Internal Server Error
             HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
-            string errorMessage = "An internal server error occurred.";
+            string message = AppConstants.Messages.InternalServerError;
 
-            // Check for our specific custom exceptions from the service layer
             switch (exception)
             {
-                case InvalidOperationException ex: // e.g., "Username already exists"
-                    statusCode = HttpStatusCode.Conflict; // 409
-                    errorMessage = ex.Message;
+                case InvalidOperationException ex:
+                    statusCode = HttpStatusCode.Conflict;       // 409
+                    message = ex.Message;
                     break;
-                case UnauthorizedAccessException ex: // e.g., "Invalid password"
-                    statusCode = HttpStatusCode.Unauthorized; // 401
-                    errorMessage = ex.Message;
+
+                case UnauthorizedAccessException ex:
+                    statusCode = HttpStatusCode.Unauthorized;  // 401
+                    message = ex.Message;
                     break;
-                case KeyNotFoundException ex: // Example: If an ID isn't found
-                    statusCode = HttpStatusCode.NotFound; // 404
-                    errorMessage = ex.Message;
+
+                case KeyNotFoundException ex:
+                    statusCode = HttpStatusCode.NotFound;      // 404
+                    message = ex.Message;
                     break;
-                // You can add more custom exception types here
+
+                // Add custom exceptions here if needed:
+                // case BadRequestException ex: ...
             }
 
-            // Set the HTTP response
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = AppConstants.MimeTypes.Json;
             context.Response.StatusCode = (int)statusCode;
 
-            // Create the JSON error object
-            var errorResponse = new { error = errorMessage };
-            var jsonResponse = JsonSerializer.Serialize(errorResponse);
+            // Response object
+            var response = new
+            {
+                success = false,
+                status = statusCode,
+                error = message,
+                stackTrace = _env.IsDevelopment() ? exception.StackTrace : null
+            };
 
-            // Write the JSON to the response
-            await context.Response.WriteAsync(jsonResponse);
+            var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            await context.Response.WriteAsync(json);
         }
     }
 }

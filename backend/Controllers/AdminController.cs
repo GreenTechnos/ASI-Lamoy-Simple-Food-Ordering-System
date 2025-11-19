@@ -1,4 +1,5 @@
 using backend.Services;
+using backend.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,8 @@ namespace backend.Controllers
 {
     [Route("api/admin")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // Protect all admin-only dashboard routes
+    [Authorize(Roles = AppConstants.Roles.Admin)]
+ // Protect all admin-only dashboard routes
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
