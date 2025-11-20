@@ -1,3 +1,4 @@
+using backend.Constants;
 using backend.DTOs.User;
 using backend.Helpers;
 using backend.Models;
@@ -22,19 +23,19 @@ namespace backend.Services
 
         public async Task RegisterAsync(RegisterRequest request)
         {
-            _logger.LogInformation("Registration attempt for email: {Email}", request.Email);
+            _logger.LogInformation(AppConstants.AuthServiceLogs.RegistrationAttempt, request.Email);
 
             // 1. Check if user already exists
             if (await _userRepository.UserExistsByUsernameAsync(request.UserName))
             {
-                _logger.LogWarning("Registration failed: Username {Username} already exists.", request.UserName);
-                throw new InvalidOperationException("Username already exists.");
+                _logger.LogWarning(AppConstants.AuthServiceLogs.RegistrationFailed, "Username", request.UserName);
+                throw new InvalidOperationException(AppConstants.AuthServiceErrors.UsernameAlreadyExists);
             }
                 
             if (await _userRepository.UserExistsByEmailAsync(request.Email))
             {
-                _logger.LogWarning("Registration failed: Email {Email} already exists.", request.Email);
-                throw new InvalidOperationException("Email already exists.");
+                _logger.LogWarning(AppConstants.AuthServiceLogs.RegistrationFailed, "Email", request.Email);
+                throw new InvalidOperationException(AppConstants.AuthServiceErrors.EmailAlreadyExists);
             }
                 
             // 2. Hash the password
@@ -56,12 +57,12 @@ namespace backend.Services
             // 4. Save to the database via the repository
             await _userRepository.CreateUserAsync(newUser);
             
-            _logger.LogInformation("User {Username} registered successfully with ID {UserId}", newUser.UserName, newUser.UserId);
+            _logger.LogInformation(AppConstants.AuthServiceLogs.UserRegisteredSuccessfully, newUser.UserName, newUser.UserId);
         }
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
         {
-            _logger.LogInformation("Login attempt for email: {Email}", request.Email);
+            _logger.LogInformation(AppConstants.AuthServiceLogs.LoginAttempt, request.Email);
 
             // 1. Get user from repository
             var user = await _userRepository.GetUserByEmailAsync(request.Email);
@@ -69,8 +70,8 @@ namespace backend.Services
             // 2. Validate user and password
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
-                _logger.LogWarning("Failed login attempt for email: {Email}", request.Email);
-                throw new UnauthorizedAccessException("Invalid Email or password.");
+                _logger.LogWarning(AppConstants.AuthServiceLogs.FailedLoginAttempt, request.Email);
+                throw new UnauthorizedAccessException(AppConstants.AuthServiceErrors.InvalidEmailOrPassword);
             }
 
             // 3. Generate Token
@@ -81,7 +82,7 @@ namespace backend.Services
                 user.UserName
             );
 
-            _logger.LogInformation("User {Username} (ID: {UserId}) logged in successfully.", user.UserName, user.UserId);
+            _logger.LogInformation(AppConstants.AuthServiceLogs.UserLoggedInSuccessfully, user.UserName, user.UserId);
 
             // 4. Return the DTO
             return new LoginResponse

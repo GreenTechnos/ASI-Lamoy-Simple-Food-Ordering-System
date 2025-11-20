@@ -1,3 +1,4 @@
+using backend.Constants;
 using backend.DTOs.User;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace backend.Controllers
             // the middleware will catch it and return a 409 Conflict.
             
             await _authService.RegisterAsync(request);
-            return Ok(new { message = "Registration complete!" });
+            return Ok(new { message = AppConstants.Messages.AuthControllerMessage });
         }
 
         [HttpPost("login")]

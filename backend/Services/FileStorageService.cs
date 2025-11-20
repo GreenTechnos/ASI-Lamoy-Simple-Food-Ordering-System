@@ -1,3 +1,5 @@
+using backend.Constants;
+
 namespace backend.Services
 {
     public class FileStorageService : IFileStorageService
@@ -14,7 +16,7 @@ namespace backend.Services
         {
             if (file == null || file.Length == 0)
             {
-                throw new ArgumentNullException(nameof(file), "File cannot be null or empty.");
+                throw new ArgumentNullException(nameof(file), AppConstants.FileStorageServiceErrors.FileCannotBeNullOrEmpty);
             }
 
             // Path to wwwroot/uploads
@@ -36,7 +38,7 @@ namespace backend.Services
             }
 
             // Return the web-accessible path
-            return $"/{subfolder}/{fileName}";
+            return $"{AppConstants.FileStorageServicePaths.PathSeparator}{subfolder}{AppConstants.FileStorageServicePaths.PathSeparator}{fileName}";
         }
     }
 }

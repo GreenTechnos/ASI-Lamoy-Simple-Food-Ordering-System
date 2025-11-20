@@ -2,43 +2,79 @@ using backend.DTOs.User;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+// 1. Add required using statements
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using backend.Constants;
 
 namespace backend.Controllers
 {
     [Route("api/user")]
     [ApiController]
+    [Authorize] // 2. Secure the entire controller by default
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ILogger<UserController> _logger; // 3. Add logger
 
-        public UserController(IUserService userService)
+        // 4. Inject ILogger
+        public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
+
+        // --- NEW PROFILE ENDPOINTS (For the logged-in user) ---
+
+        [HttpGet("profile")] // GET /api/user/profile
+        public async Task<ActionResult<UserDto>> GetMyProfile()
+        {
+            _logger.LogInformation(AppConstants.Logs.UserController.RequestReceived);
+            // Service gets ID from the token claims
+            var userProfile = await _userService.GetUserProfileAsync(); 
+            return Ok(userProfile);
+        }
+
+        [HttpPut("profile")] // PUT /api/user/profile
+        public async Task<ActionResult<UserDto>> UpdateMyProfile([FromBody] UserUpdateDto dto) // 5. Use UserUpdateDto
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _logger.LogInformation(AppConstants.Logs.UserController.RequestReceived);
+            // Service gets ID from the token claims and updates
+            var updatedProfile = await _userService.UpdateUserProfileAsync(dto); 
+            return Ok(updatedProfile);
+        }
+        
+        // --- END NEW PROFILE ENDPOINTS ---
+
 
         // --- Password Reset Endpoints ---
 
         [HttpPost("request-password-reset")]
+        [AllowAnonymous] // 6. Allow anonymous access
         public async Task<IActionResult> RequestReset([FromBody] ForgotPasswordRequest request)
         {
-            // Middleware will catch any exceptions, but our service
-            // is designed to return OK even if the user isn't found.
             await _userService.RequestPasswordResetAsync(request);
-            return Ok(new { message = "If an account with that email exists, a password reset link has been sent." });
+            return Ok(new { message = AppConstants.Logs.UserController.IfExist });
         }
 
         [HttpPost("reset-password")]
+        [AllowAnonymous] // 6. Allow anonymous access
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            // Middleware will catch the "Invalid or expired token" exception
             await _userService.ResetPasswordAsync(request);
-            return Ok(new { message = "Password reset successful. You can now log in." });
+            return Ok(new { message = AppConstants.Logs.UserController.Successful });
         }
         
-        // --- User Data Endpoints ---
+        // --- ADMIN-ONLY ENDPOINTS ---
 
         [HttpGet]
-        [Authorize(Roles = "Admin")] // Protected! Only admins can see all users.
+  [Authorize(Roles = AppConstants.Roles.Admin)]// Kept admin-only
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
@@ -46,12 +82,21 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize] // Protected! (You might enhance this to check if user ID matches token)
+          [Authorize(Roles = AppConstants.Roles.Admin)] // 7. Changed to Admin-only for getting *other* users
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
-            // Middleware will catch the "User not found" exception
             var user = await _userService.GetUserByIdAsync(id);
             return Ok(user);
         }
+
+        [HttpPost("profile/reset-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ProfileResetPassword([FromBody] ResetPasswordProfile dto)
+        {
+            await _userService.ProfileResetPasswordAsync(dto);
+            return Ok(new { message = AppConstants.Logs.UserController.SuccessfulChangePass });
+        }
+
+        
     }
 }
