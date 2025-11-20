@@ -178,6 +178,89 @@ public static class OrderController
         public const string Json = "application/json";
     }
 
+    public static class AdminServiceMessages
+    {
+        public const string Guest = "Guest";
+        public const string OrderPrefix = "Order #ORD-";
+    }
+
+    public static class AdminServiceTimePhrases
+    {
+        public const string JustNow = "just now";
+        public const string MinutesAgo = "{0} mins ago";
+        public const string HourAgo = "{0} hour{1} ago";
+        public const string DayAgo = "{0} day{1} ago";
+        public const string WeekAgo = "{0} week{1} ago";
+        public const string DateFormat = "MMM dd, yyyy";
+    }
+
+    public static class AdminServiceActivityTypes
+    {
+        public const string ActivityType = "order";
+        public const string NewOrderReceived = "New order received";
+        public const string OrderBeingPrepared = "Order being prepared";
+        public const string OrderReady = "Order ready";
+        public const string OrderCompleted = "Order completed";
+        public const string OrderCancelled = "Order cancelled";
+        public const string OrderNowBeingPrepared = "{0} is now being prepared";
+        public const string OrderReadyForDelivery = "{0} is ready for delivery";
+        public const string OrderMarkedAsDelivered = "{0} marked as delivered";
+        public const string OrderWasCancelled = "{0} was cancelled";
+        public const string OrderFrom = "{0} from {1}";
+    }
+
+    public static class AdminServiceColors
+    {
+        public const string Green = "green";
+        public const string Blue = "blue";
+        public const string Yellow = "yellow";
+        public const string Red = "red";
+        public const string Purple = "purple";
+        public const string Gray = "gray";
+    }
+
+    public static class AuthServiceErrors
+    {
+        public const string UsernameAlreadyExists = "Username already exists.";
+        public const string EmailAlreadyExists = "Email already exists.";
+        public const string InvalidEmailOrPassword = "Invalid Email or password.";
+    }
+
+    public static class AuthServiceLogs
+    {
+        public const string RegistrationAttempt = "Registration attempt for email: {0}";
+        public const string RegistrationFailed = "Registration failed: {0} {1} already exists.";
+        public const string UserRegisteredSuccessfully = "User {0} registered successfully with ID {1}";
+        public const string LoginAttempt = "Login attempt for email: {0}";
+        public const string FailedLoginAttempt = "Failed login attempt for email: {0}";
+        public const string UserLoggedInSuccessfully = "User {0} (ID: {1}) logged in successfully.";
+    }
+
+    public static class EmailServiceEnvironmentVariables
+    {
+        public const string SmtpServer = "SMTP_SERVER";
+        public const string SmtpPort = "SMTP_PORT";
+        public const string SmtpSenderName = "SMTP_SENDER_NAME";
+        public const string SmtpEmail = "SMTP_EMAIL";
+        public const string SmtpPassword = "SMTP_PASSWORD";
+    }
+
+    public static class EmailServiceSettings
+    {
+        public const bool EnableSsl = true;
+        public const bool IsBodyHtml = true;
+    }
+
+    public static class FileStorageServiceErrors
+    {
+        public const string FileCannotBeNullOrEmpty = "File cannot be null or empty.";
+    }
+
+    public static class FileStorageServicePaths
+    {
+        public const string PathSeparator = "/";
+    }
+
     
 }
     }
