@@ -1,3 +1,4 @@
+using backend.Constants;
 using System.Net;
 using System.Net.Mail;
 
@@ -14,12 +15,12 @@ namespace backend.Services
 
         public EmailService()
         {
-            _smtpServer = Environment.GetEnvironmentVariable("SMTP_SERVER")!;
-            _port = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT")!);
-            _senderName = Environment.GetEnvironmentVariable("SMTP_SENDER_NAME")!;
-            _senderEmail = Environment.GetEnvironmentVariable("SMTP_EMAIL")!;
-            _username = Environment.GetEnvironmentVariable("SMTP_EMAIL")!;
-            _password = Environment.GetEnvironmentVariable("SMTP_PASSWORD")!;
+            _smtpServer = Environment.GetEnvironmentVariable(AppConstants.EmailServiceEnvironmentVariables.SmtpServer)!;
+            _port = int.Parse(Environment.GetEnvironmentVariable(AppConstants.EmailServiceEnvironmentVariables.SmtpPort)!);
+            _senderName = Environment.GetEnvironmentVariable(AppConstants.EmailServiceEnvironmentVariables.SmtpSenderName)!;
+            _senderEmail = Environment.GetEnvironmentVariable(AppConstants.EmailServiceEnvironmentVariables.SmtpEmail)!;
+            _username = Environment.GetEnvironmentVariable(AppConstants.EmailServiceEnvironmentVariables.SmtpEmail)!;
+            _password = Environment.GetEnvironmentVariable(AppConstants.EmailServiceEnvironmentVariables.SmtpPassword)!;
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
@@ -27,7 +28,7 @@ namespace backend.Services
             using var smtp = new SmtpClient(_smtpServer, _port)
             {
                 Credentials = new NetworkCredential(_username, _password),
-                EnableSsl = true
+                EnableSsl = AppConstants.EmailServiceSettings.EnableSsl
             };
 
             var mail = new MailMessage
@@ -35,7 +36,7 @@ namespace backend.Services
                 From = new MailAddress(_senderEmail, _senderName),
                 Subject = subject,
                 Body = body,
-                IsBodyHtml = true
+                IsBodyHtml = AppConstants.EmailServiceSettings.IsBodyHtml
             };
             mail.To.Add(toEmail);
 

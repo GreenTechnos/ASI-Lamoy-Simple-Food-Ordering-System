@@ -1,3 +1,4 @@
+using backend.Constants;
 using backend.Data;
 using backend.DTOs.Admin;
 using backend.Models;
@@ -66,7 +67,7 @@ namespace backend.Services
                 .Select(o => new RecentOrderDto
                 {
                     OrderId = o.OrderId,
-                    Customer = o.User != null ? o.User.FullName : "Guest",
+                    Customer = o.User != null ? o.User.FullName : AppConstants.AdminServiceMessages.Guest,
                     Total = o.TotalPrice,
                     Status = o.Status.ToString(),
                     OrderDate = DateTime.SpecifyKind(o.OrderDate, DateTimeKind.Utc) // ✅ fix
@@ -125,12 +126,12 @@ namespace backend.Services
 
                 string color = status switch
                 {
-                    OrderStatus.Delivered => "green",
-                    OrderStatus.Preparing => "blue",
-                    OrderStatus.Pending => "yellow",
-                    OrderStatus.Cancelled => "red",
-                    OrderStatus.Ready => "purple",
-                    _ => "gray"
+                    OrderStatus.Delivered => AppConstants.AdminServiceColors.Green,
+                    OrderStatus.Preparing => AppConstants.AdminServiceColors.Blue,
+                    OrderStatus.Pending => AppConstants.AdminServiceColors.Yellow,
+                    OrderStatus.Cancelled => AppConstants.AdminServiceColors.Red,
+                    OrderStatus.Ready => AppConstants.AdminServiceColors.Purple,
+                    _ => AppConstants.AdminServiceColors.Gray
                 };
 
                 statusDistribution.Add(new OrderStatusDistributionDto
@@ -167,24 +168,24 @@ namespace backend.Services
                 switch (order.Status)
                 {
                     case OrderStatus.Pending:
-                        action = "New order received";
-                        description = $"Order #ORD-{order.OrderId} from {order.CustomerName}";
+                        action = AppConstants.AdminServiceActivityTypes.NewOrderReceived;
+                        description = $"{AppConstants.AdminServiceMessages.OrderPrefix}{order.OrderId} from {order.CustomerName}";
                         break;
                     case OrderStatus.Preparing:
-                        action = "Order being prepared";
-                        description = $"Order #ORD-{order.OrderId} is now being prepared";
+                        action = AppConstants.AdminServiceActivityTypes.OrderBeingPrepared;
+                        description = $"{AppConstants.AdminServiceMessages.OrderPrefix}{order.OrderId} is now being prepared";
                         break;
                     case OrderStatus.Ready:
-                        action = "Order ready";
-                        description = $"Order #ORD-{order.OrderId} is ready for delivery";
+                        action = AppConstants.AdminServiceActivityTypes.OrderReady;
+                        description = $"{AppConstants.AdminServiceMessages.OrderPrefix}{order.OrderId} is ready for delivery";
                         break;
                     case OrderStatus.Delivered:
-                        action = "Order completed";
-                        description = $"Order #ORD-{order.OrderId} marked as delivered";
+                        action = AppConstants.AdminServiceActivityTypes.OrderCompleted;
+                        description = $"{AppConstants.AdminServiceMessages.OrderPrefix}{order.OrderId} marked as delivered";
                         break;
                     case OrderStatus.Cancelled:
-                        action = "Order cancelled";
-                        description = $"Order #ORD-{order.OrderId} was cancelled";
+                        action = AppConstants.AdminServiceActivityTypes.OrderCancelled;
+                        description = $"{AppConstants.AdminServiceMessages.OrderPrefix}{order.OrderId} was cancelled";
                         break;
                 }
 
@@ -194,7 +195,7 @@ namespace backend.Services
                     Action = action,
                     Description = description,
                     Time = GetTimeAgo(order.OrderDate),
-                    Type = type
+                    Type = AppConstants.AdminServiceActivityTypes.ActivityType
                 });
             }
             recentActivity = recentActivity.Take(4).ToList();
@@ -221,13 +222,13 @@ namespace backend.Services
             var now = DateTime.UtcNow;
             var timeSpan = now - dateTime;
 
-            if (timeSpan.TotalMinutes < 1) return "just now";
+            if (timeSpan.TotalMinutes < 1) return AppConstants.AdminServiceTimePhrases.JustNow;
             if (timeSpan.TotalMinutes < 60) return $"{(int)timeSpan.TotalMinutes} mins ago";
             if (timeSpan.TotalHours < 24) return $"{(int)timeSpan.TotalHours} hour{((int)timeSpan.TotalHours != 1 ? "s" : "")} ago";
             if (timeSpan.TotalDays < 7) return $"{(int)timeSpan.TotalDays} day{((int)timeSpan.TotalDays != 1 ? "s" : "")} ago";
             if (timeSpan.TotalDays < 30) return $"{(int)(timeSpan.TotalDays / 7)} week{((int)(timeSpan.TotalDays / 7) != 1 ? "s" : "")} ago";
 
-            return dateTime.ToString("MMM dd, yyyy");
+            return dateTime.ToString(AppConstants.AdminServiceTimePhrases.DateFormat);
         }
     }
 }
